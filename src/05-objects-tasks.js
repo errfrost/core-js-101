@@ -117,32 +117,74 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  build: '',
+  order: 0,
+
+  errorCheck(order) {
+    if (order < this.order) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (order === this.order && (order === 1 || order === 2 || order === 6)) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    const newThis = { ...this };
+    this.errorCheck(1);
+    newThis.order = 1;
+    newThis.build = value;
+    return newThis;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    const newThis = { ...this };
+    this.errorCheck(2);
+    newThis.order = 2;
+    newThis.build += `#${value}`;
+    return newThis;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    const newThis = { ...this };
+    this.errorCheck(3);
+    newThis.order = 3;
+    newThis.build += `.${value}`;
+    return newThis;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    const newThis = { ...this };
+    this.errorCheck(4);
+    newThis.order = 4;
+    newThis.build += `[${value}]`;
+    return newThis;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    const newThis = { ...this };
+    this.errorCheck(5);
+    newThis.order = 5;
+    newThis.build += `:${value}`;
+    return newThis;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    const newThis = { ...this };
+    this.errorCheck(6);
+    newThis.order = 6;
+    newThis.build += `::${value}`;
+    return newThis;
+  },
+
+  combine(selector1, combinator, selector2) {
+    const newThis = { ...this };
+    newThis.build = `${selector1.build} ${combinator} ${selector2.build}`;
+    return newThis;
+  },
+
+  stringify() {
+    return this.build;
   },
 };
 
