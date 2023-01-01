@@ -450,8 +450,25 @@ function getMatrixProduct(A, B) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const set = new Set(['X', '0']);
+  for (let i = 0; i < 3; i += 1) {
+    const horSet = new Set();
+    const verSet = new Set();
+    const ldiagSet = new Set();
+    const rdiagSet = new Set();
+    for (let j = 0; j < 3; j += 1) {
+      horSet.add(position[i][j]);
+      verSet.add(position[j][i]);
+      ldiagSet.add(position[j][j]);
+      rdiagSet.add(position[j][2 - j]);
+    }
+    if (horSet.size === 1 && set.has(position[i][0])) return position[i][0];
+    if (verSet.size === 1 && set.has(position[0][i])) return position[0][i];
+    if (ldiagSet.size === 1 && set.has(position[0][0])) return position[0][0];
+    if (rdiagSet.size === 1 && set.has(position[0][2])) return position[0][2];
+  }
+  return undefined;
 }
 
 
